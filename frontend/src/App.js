@@ -1,10 +1,19 @@
-import './App.css';
+import {Container} from 'react-bootstrap'
+import { Outlet } from 'react-router-dom';
+import Header from "./components/Header";
+import Footer from './components/Footer';
 
 function App() {
   return (
-    <div>
-      <h1>Hello new users</h1>
-    </div>
+    <>
+      <Header />
+      <main className='py-3'>
+        <Container>
+          <Outlet />
+        </Container>
+      </main>
+      <Footer />
+    </>
   );
 }
 
