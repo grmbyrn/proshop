@@ -1,12 +1,16 @@
 import { LinkContainer } from "react-router-bootstrap"
 import {Table, Button} from 'react-bootstrap'
-import { FaTimes } from "react-icons/fa"
+import { FaTrash, FaTimes, FaEdit, FaCheck } from "react-icons/fa"
 import Message from "../../components/Message"
 import Loader from "../../components/Loader"
-import { useGetOrdersQuery } from "../../slices/ordersApiSlice"
+import { useGetUsersQuery } from "../../slices/ordersApiSlice"
 
-const OrderListScreen = () => {
-  const {data: orders, isLoading, error} = useGetOrdersQuery()
+const UserListScreen = () => {
+  const {data: users, refetch, isLoading, error} = useGetUsersQuery()
+
+  const deleteHandler = (id) => {
+    console.log('delete')
+  }
 
   return (
     <>
@@ -29,7 +33,7 @@ const OrderListScreen = () => {
             </tr>
           </thead>
           <tbody>
-            {orders.map(order => (
+            {users.map(order => (
               <tr key={order._id}>
                 <td>{order._id}</td>
                 <td>{order.user && order.user.name}</td>
@@ -64,4 +68,4 @@ const OrderListScreen = () => {
     </>
   )
 }
-export default OrderListScreen
+export default UserListScreen
