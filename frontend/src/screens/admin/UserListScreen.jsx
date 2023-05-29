@@ -3,18 +3,30 @@ import {Table, Button} from 'react-bootstrap'
 import { FaTrash, FaTimes, FaEdit, FaCheck } from "react-icons/fa"
 import Message from "../../components/Message"
 import Loader from "../../components/Loader"
-import { useGetUsersQuery } from "../../slices/ordersApiSlice"
+import { useGetUsersQuery, useDeleteUserMutation } from '../../slices/usersApiSlice'
+import {toast} from 'react-toastify'
 
 const UserListScreen = () => {
   const {data: users, refetch, isLoading, error} = useGetUsersQuery()
 
-  const deleteHandler = (id) => {
-    console.log('delete')
+  const [deleteUser, {isLoading: loadingDelete}] = useDeleteUserMutation()
+
+  const deleteHandler = async (id) => {
+    if(window.confirm('Are you sure?')){
+        try{
+            await deleteUser(id)
+            toast.success('User deleted')
+            refetch()
+        } catch(error){
+            toast.error(error?.data?.message || error.error)
+        }
+    }
   }
 
   return (
     <>
-      <h1>Orders</h1>
+      <h1>Users</h1>
+      {loadingDelete && <Loader />}
       {isLoading ? (
         <Loader />
       ) : error ? (
@@ -24,41 +36,38 @@ const UserListScreen = () => {
           <thead>
             <tr>
               <th>ID</th>
-              <th>USER</th>
-              <th>DATE</th>
-              <th>TOTAL</th>
-              <th>PAID</th>
-              <th>DELIVERED</th>
+              <th>NAME</th>
+              <th>EMAIL</th>
+              <th>ADMIN</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {users.map(order => (
-              <tr key={order._id}>
-                <td>{order._id}</td>
-                <td>{order.user && order.user.name}</td>
-                <td>{order.createdAt.substring(0, 10)}</td>
-                <td>${order.totalPrice}</td>
+            {users.map(user => (
+              <tr key={user._id}>
+                <td>{user._id}</td>
+                <td>{user.name}</td>
+                <td><a href={`mailto:${user.email}`}>{user.email}</a></td>
                 <td>
-                  {order.isPaid ? (
-                    order.paidAt.substring(0, 10)
+                  {user.isAdmin ? (
+                    <FaCheck style={{color: 'green'}} />
                   ) : (
                     <FaTimes style={{color: 'red'}} />
                   )}
                 </td>
                 <td>
-                  {order.isDelivered ? (
-                    order.deliveredAt.substring(0, 10)
-                  ) : (
-                    <FaTimes style={{color: 'red'}} />
-                  )}
-                </td>
-                <td>
-                  <LinkContainer to={`/order/${order._id}`}>
+                  <LinkContainer to={`/admin/user/${user._id}/edit`}>
                     <Button variant='light' className="btn-sm">
-                      Details
+                      <FaEdit />
                     </Button>
                   </LinkContainer>
+                  <Button
+                    variant='danger'
+                    className="btn-sm"
+                    onClick={() => deleteHandler(user._id)}
+                  >
+                    <FaTrash style={{color: 'white'}} />
+                  </Button>
                 </td>
               </tr>
             ))}
