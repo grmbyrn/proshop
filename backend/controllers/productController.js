@@ -24,10 +24,10 @@ const getProducts = asyncHandler (async (req, res) => {
 // @route   GET /api/products/:id
 // @access  Public
 const getProductById = asyncHandler (async (req, res) => {
-    const products = await Product.findById(req.params.id)
+    const product = await Product.findById(req.params.id)
     
-    if(products){
-        res.json(products)
+    if(product){
+        res.json(product)
     } else {
         res.status(404)
         throw new Error('Resource not found')
@@ -135,4 +135,13 @@ const createProductReview = asyncHandler (async (req, res) => {
     }
 })
 
-export {getProducts, getProductById, createProduct, updateProduct, deleteProduct, createProductReview}
+// @desc   Get top rated products
+// @route   GET /api/products/top
+// @access  Public
+const getTopProducts = asyncHandler (async (req, res) => {
+    const products = await Product.find({}).sort({rating: -1}).limit(3)
+    
+    res.status(200).json(products)
+})
+
+export {getProducts, getProductById, createProduct, updateProduct, deleteProduct, createProductReview, getTopProducts}
