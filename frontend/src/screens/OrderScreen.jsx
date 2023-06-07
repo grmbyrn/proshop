@@ -34,7 +34,7 @@ const OrderScreen = () => {
                 paypalDispatch({
                     type: 'resetOptions',
                     value: {
-                        'client-id': paypal.clientID,
+                        'client-id': paypal.clientId,
                         currency: 'USD'
                     }
                 })
@@ -60,11 +60,12 @@ const OrderScreen = () => {
         })
     }
 
-    async function onApproveTest(){
-        await payOrder({orderId, details: {payer: {}}})
-        refetch()
-        toast.success('Payment successful')
-    }
+    // TESTING ONLY! REMOVE BEFORE PRODUCTION
+    // async function onApproveTest(){
+    //     await payOrder({orderId, details: {payer: {}}})
+    //     refetch()
+    //     toast.success('Payment successful')
+    // }
 
     function onError(err){
         toast.error(err.message)
@@ -72,7 +73,7 @@ const OrderScreen = () => {
 
     function createOrder(data, actions){
         return actions.order.create({
-            purchase_untis: [
+            purchase_units: [
                 {
                     amount: {
                         value: order.totalPrice
@@ -198,20 +199,21 @@ const OrderScreen = () => {
                                     <Loader />
                                 ) : (
                                     <div>
-                                    <Button
-                                        style={{ marginBottom: '10px' }}
-                                        onClick={onApproveTest}
-                                    >
-                                        Test Pay Order
-                                    </Button>
+                                        {/* THIS BUTTON IS FOR TESTING! REMOVE BEFORE PRODUCTION! */}
+                                        {/* <Button
+                                            style={{ marginBottom: '10px' }}
+                                            onClick={onApproveTest}
+                                        >
+                                            Test Pay Order
+                                        </Button> */}
 
-                                    <div>
-                                        <PayPalButtons
-                                        createOrder={createOrder}
-                                        onApprove={onApprove}
-                                        onError={onError}
-                                        ></PayPalButtons>
-                                    </div>
+                                        <div>
+                                            <PayPalButtons
+                                                createOrder={createOrder}
+                                                onApprove={onApprove}
+                                                onError={onError}
+                                            ></PayPalButtons>
+                                        </div>
                                     </div>
                                 )}
                             </ListGroup.Item>
