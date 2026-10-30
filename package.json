@@ -11,7 +11,7 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "data:import": "tsx backend/seeder.ts",
     "data:destroy": "tsx backend/seeder.ts -d",
-    "typecheck": "tsc -p backend --noEmit",
+    "typecheck": "tsc -p backend --noEmit && npm run typecheck --prefix frontend",
     "build:server": "tsc -p backend",
     "build": "npm install --include=dev && npm run build:server && npm install --prefix frontend && npm run build --prefix frontend"
   },
