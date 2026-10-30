@@ -1,4 +1,4 @@
-import { LinkContainer } from "react-router-bootstrap"
+import { Link } from 'react-router-dom'
 import {Table, Button} from 'react-bootstrap'
 import { FaTrash, FaTimes, FaEdit, FaCheck } from "react-icons/fa"
 import Message from "../../components/Message"
@@ -56,11 +56,9 @@ const UserListScreen = () => {
                   )}
                 </td>
                 <td>
-                  <LinkContainer to={`/admin/user/${user._id}/edit`}>
-                    <Button variant='light' className="btn-sm">
-                      <FaEdit />
-                    </Button>
-                  </LinkContainer>
+                  <Button as={Link} to={`/admin/user/${user._id}/edit`} variant='light' className="btn-sm">
+                    <FaEdit />
+                  </Button>
                   <Button
                     variant='danger'
                     className="btn-sm"

@@ -34,7 +34,7 @@ const OrderScreen = () => {
                 paypalDispatch({
                     type: 'resetOptions',
                     value: {
-                        'client-id': paypal.clientId,
+                        clientId: paypal.clientId,
                         currency: 'USD'
                     }
                 })
@@ -73,6 +73,7 @@ const OrderScreen = () => {
 
     function createOrder(data, actions){
         return actions.order.create({
+            intent: 'CAPTURE',
             purchase_units: [
                 {
                     amount: {
