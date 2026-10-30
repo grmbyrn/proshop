@@ -1,5 +1,5 @@
 import asyncHandler from "../middleware/asyncHandler.js"
-import Order from "../models/orderModel.js"
+import Order, { type IOrderItem } from "../models/orderModel.js"
 
 // @desc   Create a new order
 // @route   GET /api/orders
@@ -20,12 +20,12 @@ const addOrderItems = asyncHandler (async (req, res) => {
         throw new Error('No order items')
     } else {
         const order = new Order({
-            orderItems: orderItems.map((x) => ({
+            orderItems: orderItems.map((x: IOrderItem & { _id: string }) => ({
                 ...x,
                 product: x._id,
                 _id: undefined
             })),
-            user: req.user._id,
+            user: req.user!._id,
             shippingAddress,
             paymentMethod,
             itemsPrice,
@@ -44,7 +44,7 @@ const addOrderItems = asyncHandler (async (req, res) => {
 // @route   GET /api/orders/myorders
 // @access  Private
 const getMyOrders = asyncHandler (async (req, res) => {
-    const orders = await Order.find({user: req.user._id})
+    const orders = await Order.find({user: req.user!._id})
     res.status(200).json(orders)
 })
 
@@ -70,7 +70,7 @@ const updateOrderToPaid = asyncHandler (async (req, res) => {
 
     if(order){
         order.isPaid = true
-        order.paidAt = Date.now()
+        order.paidAt = new Date()
         order.paymentResult = {
             id: req.body.id,
             status: req.body.status,
@@ -95,7 +95,7 @@ const updateOrderToDelivered = asyncHandler (async (req, res) => {
 
     if(order){
         order.isDelivered = true
-        order.deliveredAt = Date.now()
+        order.deliveredAt = new Date()
 
         const updatedOrder = await order.save()
 
