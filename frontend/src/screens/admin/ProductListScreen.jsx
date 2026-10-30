@@ -58,7 +58,7 @@ const ProductListScreen = () => {
         {loadingCreate && <Loader />}
         {loadingDelete && <Loader />}
 
-        {isLoading ? <Loader /> : error ? <Message variant='danger'>{error.data.message}</Message> : (
+        {isLoading ? <Loader /> : error ? <Message variant='danger'>{error?.data?.message || error.error}</Message> : (
             <>
                 <Table>
                     <thead>
