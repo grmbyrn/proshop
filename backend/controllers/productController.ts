@@ -5,11 +5,11 @@ import Product from "../models/productModel.js"
 // @route   GET /api/products
 // @access  Public
 const getProducts = asyncHandler (async (req, res) => {
-    const pageSize = process.env.PAGINATION_LIMIT
+    const pageSize = Number(process.env.PAGINATION_LIMIT) || 8
     const page = Number(req.query.pageNumber) || 1
 
-    const keyword = req.query.keyword 
-        ? {name: {$regex: req.query.keyword, $options: 'i'}} 
+    const keyword = typeof req.query.keyword === 'string' && req.query.keyword
+        ? {name: {$regex: req.query.keyword, $options: 'i'}}
         : {}
 
     const count = await Product.countDocuments({...keyword})
@@ -41,7 +41,7 @@ const createProduct = asyncHandler (async (req, res) => {
     const product = new Product({
         name: 'Sample name',
         price: 0,
-        user: req.user._id,
+        user: req.user!._id,
         image: '/images/sample.jpg',
         brand: 'Sample brand',
         category: 'Sample category',
@@ -104,7 +104,7 @@ const createProductReview = asyncHandler (async (req, res) => {
 
     if(product) {
         const alreadyReviewed = product.reviews.find(
-            (review) => review.user.toString() === req.user._id.toString()
+            (review) => review.user.toString() === req.user!._id.toString()
         )
 
         if(alreadyReviewed){
@@ -113,10 +113,10 @@ const createProductReview = asyncHandler (async (req, res) => {
         }
 
         const review = {
-            name: req.user.name,
+            name: req.user!.name,
             rating: Number(rating),
             comment,
-            user: req.user._id
+            user: req.user!._id
         }
 
         product.reviews.push(review)

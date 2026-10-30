@@ -3,15 +3,17 @@
   "version": "1.0.0",
   "description": "eCommerce application built with the mern stack",
   "type": "module",
-  "main": "server.js",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "server": "nodemon backend/server.js",
+    "start": "node dist/server.js",
+    "server": "tsx watch backend/server.ts",
     "client": "npm start --prefix frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "data:import": "node backend/seeder.js",
-    "data:destroy": "node backend/seeder.js -d",
-    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
+    "data:import": "tsx backend/seeder.ts",
+    "data:destroy": "tsx backend/seeder.ts -d",
+    "typecheck": "tsc -p backend --noEmit",
+    "build:server": "tsc -p backend",
+    "build": "npm install --include=dev && npm run build:server && npm install --prefix frontend && npm run build --prefix frontend"
   },
   "repository": {
     "type": "git",
@@ -37,7 +39,13 @@
     "node": ">=20.0.0"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.3.0",
+    "@types/node": "^22.20.5",
     "concurrently": "^10.0.6",
-    "nodemon": "^3.1.14"
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
   }
 }

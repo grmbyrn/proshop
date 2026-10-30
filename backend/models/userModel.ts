@@ -1,7 +1,22 @@
-import mongoose from 'mongoose'
+import mongoose, { type HydratedDocument, type Model } from 'mongoose'
 import bcrypt from 'bcryptjs'
 
-const userSchema = new mongoose.Schema({
+export interface IUser {
+    name: string
+    email: string
+    password: string
+    isAdmin: boolean
+}
+
+interface IUserMethods {
+    matchPassword(enteredPassword: string): Promise<boolean>
+}
+
+type UserModel = Model<IUser, {}, IUserMethods>
+
+export type UserDocument = HydratedDocument<IUser, IUserMethods>
+
+const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>({
     name: {
         type: String,
         required: true
@@ -24,7 +39,7 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 })
 
-userSchema.methods.matchPassword = async function (enteredPassword){
+userSchema.methods.matchPassword = async function (enteredPassword: string){
     return await bcrypt.compare(enteredPassword, this.password)
 }
 
@@ -37,6 +52,6 @@ userSchema.pre('save', async function(){
     this.password = await bcrypt.hash(this.password, salt)
 })
 
-const User = mongoose.model('User', userSchema)
+const User = mongoose.model<IUser, UserModel>('User', userSchema)
 
 export default User

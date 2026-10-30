@@ -1,6 +1,7 @@
 import path from 'path'
 import express from 'express'
-import multer from 'multer'
+import multer, { type FileFilterCallback } from 'multer'
+import type { Request } from 'express'
 const router = express.Router()
 
 const storage = multer.diskStorage({
@@ -12,7 +13,7 @@ const storage = multer.diskStorage({
     }
 })
 
-function fileFilter(req, file, cb) {
+function fileFilter(req: Request, file: Express.Multer.File, cb: FileFilterCallback) {
     const filetypes = /jpe?g|png|webp/;
     const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
   
@@ -22,7 +23,7 @@ function fileFilter(req, file, cb) {
     if (extname && mimetype) {
       cb(null, true);
     } else {
-      cb(new Error('Images only!'), false);
+      cb(new Error('Images only!'));
     }
   }
 
