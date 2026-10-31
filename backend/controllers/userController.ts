@@ -1,12 +1,19 @@
 import asyncHandler from "../middleware/asyncHandler.js"
 import User from "../models/userModel.js"
 import generateToken from "../utils/generateToken.js"
+import { MIN_PASSWORD_LENGTH, isNonEmptyString, isValidEmail, isValidPassword } from "../utils/validation.js"
 
 // @desc   Auth user & get token
 // @route   POST /api/users/login
 // @access  Public
 const authUser = asyncHandler (async (req, res) => {
     const {email, password} = req.body
+
+    // Strings only, so objects like {"$gt": ""} can't reach the query
+    if(typeof email !== 'string' || typeof password !== 'string'){
+        res.status(400)
+        throw new Error('Email and password are required')
+    }
 
     const user = await User.findOne({email})
 
@@ -30,6 +37,21 @@ const authUser = asyncHandler (async (req, res) => {
 // @access  Public
 const registerUser = asyncHandler (async (req, res) => {
     const {name, email, password} = req.body
+
+    if(!isNonEmptyString(name)){
+        res.status(400)
+        throw new Error('Name is required')
+    }
+
+    if(!isValidEmail(email)){
+        res.status(400)
+        throw new Error('Please enter a valid email')
+    }
+
+    if(!isValidPassword(password)){
+        res.status(400)
+        throw new Error(`Password must be at least ${MIN_PASSWORD_LENGTH} characters`)
+    }
 
     const userExists = await User.findOne({email})
 
@@ -97,11 +119,28 @@ const updateUserProfile = asyncHandler (async (req, res) => {
     const user = await User.findById(req.user!._id)
 
     if(user){
-        user.name = req.body.name || user.name
-        user.email = req.body.email || user.email
+        const {name, email, password} = req.body
 
-        if(req.body.password){
-            user.password = req.body.password
+        if(email && !isValidEmail(email)){
+            res.status(400)
+            throw new Error('Please enter a valid email')
+        }
+
+        if(password && !isValidPassword(password)){
+            res.status(400)
+            throw new Error(`Password must be at least ${MIN_PASSWORD_LENGTH} characters`)
+        }
+
+        if(isNonEmptyString(name)){
+            user.name = name
+        }
+
+        if(email){
+            user.email = email
+        }
+
+        if(password){
+            user.password = password
         }
 
         const updatedUser = await user.save()
@@ -166,8 +205,21 @@ const updateUser = asyncHandler (async (req, res) => {
     const user = await User.findById(req.params.id)
 
     if(user){
-        user.name = req.body.name || user.name
-        user.email = req.body.email || user.email
+        const {name, email} = req.body
+
+        if(email && !isValidEmail(email)){
+            res.status(400)
+            throw new Error('Please enter a valid email')
+        }
+
+        if(isNonEmptyString(name)){
+            user.name = name
+        }
+
+        if(email){
+            user.email = email
+        }
+
         user.isAdmin = Boolean(req.body.isAdmin)
 
         const updatedUser = await user.save()

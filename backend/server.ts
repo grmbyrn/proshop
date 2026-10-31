@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 dotenv.config()
 import connectDB from './config/db.js'
 import { notFound, errorHandler } from './middleware/errorMiddleware.js'
+import { securityHeaders } from './middleware/securityMiddleware.js'
 import productRoutes from './routes/productRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
@@ -14,6 +15,14 @@ const port = process.env.PORT || 5000
 connectDB()
 
 const app = express()
+
+// Render (and most hosts) sit behind one proxy; needed so rate limiting sees the real client IP
+if(process.env.NODE_ENV === 'production'){
+    app.set('trust proxy', 1)
+}
+
+// Security headers
+app.use(securityHeaders)
 
 // Body parser middleware
 app.use(express.json())

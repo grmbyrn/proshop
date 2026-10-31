@@ -2,6 +2,7 @@ import path from 'path'
 import express from 'express'
 import multer, { type FileFilterCallback } from 'multer'
 import type { Request } from 'express'
+import { protect, admin } from '../middleware/authMiddleware.js'
 const router = express.Router()
 
 const storage = multer.diskStorage({
@@ -27,10 +28,10 @@ function fileFilter(req: Request, file: Express.Multer.File, cb: FileFilterCallb
     }
   }
 
-const upload = multer({ storage, fileFilter });
+const upload = multer({ storage, fileFilter, limits: { fileSize: 2 * 1024 * 1024 } }); // 2MB
 const uploadSingleImage = upload.single('image');
 
-router.post('/', (req, res) => {
+router.post('/', protect, admin, (req, res) => {
     uploadSingleImage(req, res, function (err) {
         if (err) {
         return res.status(400).send({ message: err.message });

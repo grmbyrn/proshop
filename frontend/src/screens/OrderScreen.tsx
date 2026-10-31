@@ -19,6 +19,7 @@ import {
     useDeliverOrderMutation
 } from "../slices/ordersApiSlice"
 import { getErrorMessage } from '../utils/getErrorMessage'
+import { formatDateTime } from '../utils/formatDate'
 
 const OrderScreen = () => {
     const {id: orderId} = useParams() as {id: string}
@@ -125,7 +126,7 @@ const OrderScreen = () => {
                         </p>
                         {order.isDelivered ? (
                             <Message variant='success'>
-                                Delivered on {order.deliveredAt}
+                                Delivered on {formatDateTime(order.deliveredAt)}
                             </Message>
                         ) : (
                             <Message variant='danger'>
@@ -142,7 +143,7 @@ const OrderScreen = () => {
                         </p>
                         {order.isPaid ? (
                             <Message variant='success'>
-                                Paid on {order.paidAt}
+                                Paid on {formatDateTime(order.paidAt)}
                             </Message>
                         ) : (
                             <Message variant='danger'>
