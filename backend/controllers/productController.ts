@@ -1,5 +1,6 @@
 import asyncHandler from "../middleware/asyncHandler.js"
 import Product from "../models/productModel.js"
+import { escapeRegex } from "../utils/validation.js"
 
 // @desc   Fetch all products
 // @route   GET /api/products
@@ -9,7 +10,7 @@ const getProducts = asyncHandler (async (req, res) => {
     const page = Number(req.query.pageNumber) || 1
 
     const keyword = typeof req.query.keyword === 'string' && req.query.keyword
-        ? {name: {$regex: req.query.keyword, $options: 'i'}}
+        ? {name: {$regex: escapeRegex(req.query.keyword), $options: 'i'}}
         : {}
 
     const count = await Product.countDocuments({...keyword})
@@ -99,6 +100,16 @@ const deleteProduct = asyncHandler (async (req, res) => {
 // @access  Private
 const createProductReview = asyncHandler (async (req, res) => {
     const {rating, comment} = req.body
+
+    if(![1, 2, 3, 4, 5].includes(Number(rating))){
+        res.status(400)
+        throw new Error('Rating must be between 1 and 5')
+    }
+
+    if(typeof comment !== 'string' || comment.trim().length === 0){
+        res.status(400)
+        throw new Error('Comment is required')
+    }
 
     const product = await Product.findById(req.params.id)
 

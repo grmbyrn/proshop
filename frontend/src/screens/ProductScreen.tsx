@@ -11,6 +11,7 @@ import Message from "../components/Message"
 import { addToCart } from "../slices/cartSlice"
 import Meta from "../components/Meta"
 import { getErrorMessage } from '../utils/getErrorMessage'
+import { formatDate } from '../utils/formatDate'
 
 const ProductScreen = () => {
     const {id: productId} = useParams() as {id: string}
@@ -162,7 +163,7 @@ const ProductScreen = () => {
                                     {review.name}
                                 </strong>
                                 <Rating value={review.rating} />
-                                <p>{review.createdAt.substring(0, 10)}</p>
+                                <p>{formatDate(review.createdAt)}</p>
                                 <p>{review.comment}</p>
                             </ListGroup.Item>
                         ))}

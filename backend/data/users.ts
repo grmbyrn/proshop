@@ -1,10 +1,12 @@
 import bcrypt from 'bcryptjs'
 
-const users = [
+// A function rather than a constant so the admin password is read after dotenv has loaded.
+// The admin password stays private; John and Jane are the public demo logins.
+const getUsers = (adminPassword: string) => [
     {
         name: 'Admin User',
         email: 'admin@email.com',
-        password: bcrypt.hashSync('123456', 10),
+        password: bcrypt.hashSync(adminPassword, 10),
         isAdmin: true
     },
     {
@@ -21,4 +23,4 @@ const users = [
     }
 ]
 
-export default users
+export default getUsers

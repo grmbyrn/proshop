@@ -5,6 +5,7 @@ import Message from "../../components/Message"
 import Loader from "../../components/Loader"
 import { useGetOrdersQuery } from "../../slices/ordersApiSlice"
 import { getErrorMessage } from '../../utils/getErrorMessage'
+import { formatDate } from '../../utils/formatDate'
 
 const OrderListScreen = () => {
   const {data: orders, error} = useGetOrdersQuery()
@@ -34,18 +35,18 @@ const OrderListScreen = () => {
               <tr key={order._id}>
                 <td>{order._id}</td>
                 <td>{order.user && order.user.name}</td>
-                <td>{order.createdAt.substring(0, 10)}</td>
+                <td>{formatDate(order.createdAt)}</td>
                 <td>${order.totalPrice}</td>
                 <td>
                   {order.isPaid ? (
-                    order.paidAt?.substring(0, 10)
+                    formatDate(order.paidAt)
                   ) : (
                     <FaTimes style={{color: 'red'}} />
                   )}
                 </td>
                 <td>
                   {order.isDelivered ? (
-                    order.deliveredAt?.substring(0, 10)
+                    formatDate(order.deliveredAt)
                   ) : (
                     <FaTimes style={{color: 'red'}} />
                   )}
